@@ -1,0 +1,21 @@
+global:
+  containerRegistry: ghcr.io
+
+image:
+  registry: ""
+  repository: jonaskop/home-assistant
+  tag: ""
+
+ingress:
+  hostname: home-assistant.example.com
+  annotations: {}
+
+config:
+  postgresql:
+    hostname: "not_set"
+    username: "not_set"
+    password: "not_set"
+    database: "home-assistant"
+  google:
+    projectId: "not_set"
+    serviceAccount: "not_set"

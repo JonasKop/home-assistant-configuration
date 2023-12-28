@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "home-assistant.fullname" . }}
+  annotations:
+    nginx.org/websocket-services: {{ include "home-assistant.fullname" . }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    {{- with .Values.ingress.annotations }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ .Values.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "home-assistant.fullname" . }}
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hostname }}
+      secretName: {{ include "home-assistant.fullname" . }}-tls
