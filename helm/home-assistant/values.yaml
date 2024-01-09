@@ -11,11 +11,10 @@ ingress:
   annotations: {}
 
 config:
-  postgresql:
-    hostname: "not_set"
-    username: "not_set"
-    password: "not_set"
-    database: "home-assistant"
-  google:
-    projectId: "not_set"
-    serviceAccount: "not_set"
+  persistentFiles:
+    .cloud: /config/.cloud
+    .storage: /config/.storage
+  configFiles:
+    configuration.yaml: ""
+  secretFiles:
+    secrets.yaml: ""
