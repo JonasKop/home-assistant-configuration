@@ -26,7 +26,10 @@ spec:
           command:
           - sh
           - -c
-          - envsubst < /tmp/secrets.yaml > /config/secrets.yaml
+          - |
+            for secretFile in /secret-files/*; do
+              envsubst < "$secretFile" > /secrets/$(basename "$secretFile")
+            done
           env:
             - name: POSTGRES_USERNAME
               valueFrom:
@@ -46,10 +49,13 @@ spec:
               memory: "64Mi"
           volumeMounts:
             - name: secrets
-              mountPath: /tmp/secrets.yaml
-              subPath: secrets.yaml
-            - name: config
-              mountPath: /config
+              mountPath: /secrets
+            # Secret files
+            {{- range $k, $v := .Values.config.secretFiles }}
+            - name: secret-files
+              mountPath: /secret-files/{{ $k }}
+              subPath: {{ $k }}
+            {{- end }}
       containers:
         - name: home-assistant
           securityContext:
@@ -61,11 +67,26 @@ spec:
               containerPort: 8123
               protocol: TCP
           volumeMounts:
+            # Persistent files
+            {{- range $k, $v := .Values.config.persistentFiles }}
+            - name: persistent-files
+              mountPath: {{ $v }}
+              subPath: {{ base $k }}
+            {{- end }}
+
+            # Config files
+            {{- range $k, $v := .Values.config.configFiles }}
+            - name: config-files
+              mountPath: /config/{{ $k }}
+              subPath: {{ $k }}
+            {{- end }}
+
+            # Secret files
+            {{- range $k, $v := .Values.config.secretFiles }}
             - name: secrets
-              mountPath: /config/serviceAccount.json
-              subPath: serviceAccount.json
-            - name: config
-              mountPath: /config
+              mountPath: /config/{{ $k }}
+              subPath: {{ $k }}
+            {{- end }}
           resources:
             requests:
               memory: "512Mi"
@@ -73,11 +94,16 @@ spec:
             limits:
               memory: "512Mi"
       volumes:
-        - name: secrets
-          secret:
-            secretName: {{ include "home-assistant.fullname" . }}
-        - name: appconfig
+        - name: persistent-files
           persistentVolumeClaim:
             claimName: {{ include "home-assistant.fullname" . }}
+        - name: config-files
+          configMap:
+            name: {{ include "home-assistant.fullname" . }}
+        - name: secret-files
+          secret:
+            secretName: {{ include "home-assistant.fullname" . }}
+        - name: secrets
+          emptyDir: {}
       securityContext:
         fsGroup: 1000
