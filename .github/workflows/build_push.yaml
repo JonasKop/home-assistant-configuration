@@ -23,7 +23,7 @@ jobs:
 
       - name: Get version
         id: get_version
-        uses: jonaskop/custom-github-actions/get-version@main
+        uses: jonaskop/custom-github-actions/get-version@48-patch-not-incrementing-correctly-in-home-assistant-repo
 
       - name: Build container image
         uses: jonaskop/custom-github-actions/build-container-image@main
