@@ -1,4 +1,4 @@
-FROM docker.io/homeassistant/home-assistant:2023.12.1
+FROM docker.io/homeassistant/home-assistant:2024.1.2
 
 RUN addgroup home-assistant -g 1000 && \
     adduser home-assistant -u 1000 -G home-assistant -D -H && \
