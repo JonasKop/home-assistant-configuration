@@ -10,6 +10,8 @@ ingress:
   hostname: home-assistant.example.com
   annotations: {}
 
+initEnv: {}
+
 config:
   persistentFiles:
     .cloud: /config/.cloud

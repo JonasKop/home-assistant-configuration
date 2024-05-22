@@ -3,6 +3,7 @@ checks:
     - unset-cpu-requirements
     - no-read-only-root-fs
     - host-network
+    - dangling-service
 
 customChecks:
   - name: "unset-cpu-requests"
