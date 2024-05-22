@@ -30,17 +30,7 @@ spec:
             for secretFile in /secret-files/*; do
               envsubst < "$secretFile" > /secrets/$(basename "$secretFile")
             done
-          env:
-            - name: POSTGRES_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: home-assistant.home-assistant-postgresql.credentials.postgresql.acid.zalan.do
-                  key: username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: home-assistant.home-assistant-postgresql.credentials.postgresql.acid.zalan.do
-                  key: password
+          env: {{- .Values.initEnv | toYaml | nindent 12 }}
           resources:
             requests:
               memory: "64Mi"
