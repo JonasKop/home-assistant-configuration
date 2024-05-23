@@ -38,6 +38,8 @@ spec:
             limits:
               memory: "64Mi"
           volumeMounts:
+            - name: config
+              mountPath: /config
             - name: secrets
               mountPath: /secrets
             # Secret files
@@ -57,20 +59,8 @@ spec:
               containerPort: 8123
               protocol: TCP
           volumeMounts:
-            # Persistent files
-            {{- range $k, $v := .Values.config.persistentFiles }}
-            - name: persistent-files
-              mountPath: {{ $v }}
-              subPath: {{ base $k }}
-            {{- end }}
-
-            # Config files
-            {{- range $k, $v := .Values.config.configFiles }}
-            - name: config-files
-              mountPath: /config/{{ $k }}
-              subPath: {{ $k }}
-            {{- end }}
-
+            - name: config
+              mountPath: /config
             # Secret files
             {{- range $k, $v := .Values.config.secretFiles }}
             - name: secrets
@@ -80,16 +70,13 @@ spec:
           resources:
             requests:
               memory: "512Mi"
-              cpu: "50m"
+              cpu: "100m"
             limits:
               memory: "512Mi"
       volumes:
-        - name: persistent-files
+        - name: config
           persistentVolumeClaim:
             claimName: {{ include "home-assistant.fullname" . }}
-        - name: config-files
-          configMap:
-            name: {{ include "home-assistant.fullname" . }}
         - name: secret-files
           secret:
             secretName: {{ include "home-assistant.fullname" . }}
