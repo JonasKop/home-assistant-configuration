@@ -13,10 +13,5 @@ ingress:
 initEnv: {}
 
 config:
-  persistentFiles:
-    .cloud: /config/.cloud
-    .storage: /config/.storage
-  configFiles:
-    configuration.yaml: ""
   secretFiles:
     secrets.yaml: ""
